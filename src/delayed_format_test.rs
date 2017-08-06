@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Timespan;
+use Span;
 use std::str::FromStr;
 use std::fmt::Write;
 
 #[test]
 fn fmt_test() {
-    let ts = Timespan::from_str("09:00:00 - 17:00:00").unwrap();
+    let ts = Span::from_str("09:00:00 - 17:00:00").unwrap();
 
     let d1 = ts.format("Opened from {start} to {end} on Monday", "%H.%M", "%H.%M");
     assert!(format!("{}", d1) == "Opened from 09.00 to 17.00 on Monday");

@@ -19,10 +19,10 @@
 use chrono;
 use regex;
 use std;
-use std::error::Error;
+use std::error::Error as StdError;
 
 #[derive(Debug)]
-pub enum TimespanError {
+pub enum Error {
     Parsing(chrono::ParseError),
     Regex(regex::Error),
     Ordering,
@@ -33,39 +33,39 @@ pub enum TimespanError {
     NoEnd,
 }
 
-impl std::fmt::Display for TimespanError {
+impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
-            TimespanError::Parsing(ref e) => write!(f, "{}", e),
-            TimespanError::Regex(ref e) => write!(f, "{}", e),
+            Error::Parsing(ref e) => write!(f, "{}", e),
+            Error::Regex(ref e) => write!(f, "{}", e),
             _ => write!(f, "{}", self.description()),
         }
     }
 }
 
-impl Error for TimespanError {
+impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
-            TimespanError::Parsing(..) => "An error occured while parsing a value",
-            TimespanError::Regex(..) => "An error occured while creating a regular expression",
-            TimespanError::Ordering => "The left value is not smaller than the right value",
-            TimespanError::OutOfRange => "This resulting value is out of range",
-            TimespanError::Empty => "The resulting span is empty",
-            TimespanError::NotContinuous => "The resulting span is not continuous",
-            TimespanError::NoStart => "The resulting span has no start value",
-            TimespanError::NoEnd => "The resulting span has no end value",
+            Error::Parsing(..) => "An error occured while parsing a value",
+            Error::Regex(..) => "An error occured while creating a regular expression",
+            Error::Ordering => "The left value is not smaller than the right value",
+            Error::OutOfRange => "This resulting value is out of range",
+            Error::Empty => "The resulting span is empty",
+            Error::NotContinuous => "The resulting span is not continuous",
+            Error::NoStart => "The resulting span has no start value",
+            Error::NoEnd => "The resulting span has no end value",
         }
     }
 }
 
-impl std::convert::From<chrono::ParseError> for TimespanError {
+impl std::convert::From<chrono::ParseError> for Error {
     fn from(e: chrono::ParseError) -> Self {
-        TimespanError::Parsing(e)
+        Error::Parsing(e)
     }
 }
 
-impl std::convert::From<regex::Error> for TimespanError {
+impl std::convert::From<regex::Error> for Error {
     fn from(e: regex::Error) -> Self {
-        TimespanError::Regex(e)
+        Error::Regex(e)
     }
 }

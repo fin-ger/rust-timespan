@@ -16,17 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Timespan;
+use Span;
 use std;
+use chrono;
 
-pub struct DelayedFormat<'a> {
-    pub span: Timespan,
+pub struct DelayedFormat<'a, T> {
+    pub span: Span<T>,
     pub fmt: &'a str,
     pub start: &'a str,
     pub end: &'a str,
 }
 
-impl<'a> std::fmt::Display for DelayedFormat<'a> {
+impl<'a> std::fmt::Display for DelayedFormat<'a, chrono::NaiveTime> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use std::fmt::Write;
 

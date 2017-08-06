@@ -19,16 +19,16 @@
 use Error;
 use Spanable;
 use Span;
-use chrono::{NaiveTime, Duration};
+use chrono::{DateTime, FixedOffset, Duration};
 use regex;
 use regex::Regex;
 
-impl Spanable for NaiveTime {}
+impl Spanable for DateTime<FixedOffset> {}
 
-pub type Timespan = Span<NaiveTime>;
+pub type Datespan = Span<DateTime<FixedOffset>>;
 
-impl Span<NaiveTime> {
-    pub fn parse_from_str(s: &str, fmt: &str, start: &str, end: &str) -> Result<Span<NaiveTime>, Error> {
+impl Span<DateTime<FixedOffset>> {
+    pub fn parse_from_str(s: &str, fmt: &str, start: &str, end: &str) -> Result<Span<DateTime<FixedOffset>>, Error> {
         let esc = regex::escape(fmt);
 
         let repl_re = Regex::new(r"(?:\\\{start\\\}|\\\{end\\\})").unwrap();
@@ -46,13 +46,13 @@ impl Span<NaiveTime> {
 
         if start_idx < end_idx {
             Span::new(
-                NaiveTime::parse_from_str(m1.as_str(), start)?,
-                NaiveTime::parse_from_str(m2.as_str(), end)?,
+                DateTime::parse_from_str(m1.as_str(), start)?,
+                DateTime::parse_from_str(m2.as_str(), end)?,
             )
         } else {
             Span::new(
-                NaiveTime::parse_from_str(m2.as_str(), start)?,
-                NaiveTime::parse_from_str(m1.as_str(), end)?,
+                DateTime::parse_from_str(m2.as_str(), start)?,
+                DateTime::parse_from_str(m1.as_str(), end)?,
             )
         }
     }

@@ -122,7 +122,6 @@ fn intersection_test() {
 
 #[test]
 fn union_test() {
-    // TODO: implement
     let t1 = Timespan::from_str("09:00:00 - 11:00:00").unwrap();
     let t2 = Timespan::from_str("10:00:00 - 12:00:00").unwrap();
     let t3 = Timespan::from_str("11:00:00 - 13:00:00").unwrap();

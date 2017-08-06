@@ -16,36 +16,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#[cfg(feature = "serde")]
-extern crate serde;
+use chrono;
+use std::cmp::{PartialOrd, Ord};
+use std::clone::Clone;
+use std::ops::{Add, Sub};
+use std::fmt::Display;
+use std::str::FromStr;
 
-#[cfg(test)]
-extern crate serde_json;
-
-#[cfg(all(test, feature = "with-serde"))]
-#[cfg_attr(all(test, feature = "with-serde"), macro_use)]
-extern crate serde_derive;
-
-extern crate chrono;
-extern crate regex;
-
-mod span;
-mod spanable;
-mod timespan;
-mod datespan;
-mod delayed_format;
-mod error;
-
-#[cfg(test)]
-mod timespan_test;
-#[cfg(test)]
-mod datespan_test;
-#[cfg(test)]
-mod delayed_format_test;
-
-pub use self::span::Span;
-pub use self::spanable::Spanable;
-pub use self::timespan::Timespan;
-pub use self::datespan::Datespan;
-pub use self::delayed_format::DelayedFormat;
-pub use self::error::Error;
+pub trait Spanable: Display + Copy + Clone +
+    FromStr<Err = chrono::ParseError> +
+    Ord + PartialOrd +
+    Add<chrono::Duration, Output = Self> + Sub<chrono::Duration, Output = Self>
+{}
