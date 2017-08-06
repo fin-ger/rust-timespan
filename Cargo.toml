@@ -1,0 +1,59 @@
+[package]
+name = "timespan"
+version = "0.0.1"
+authors = ["Fin Christensen <christensen.fin@gmail.com>"]
+description = "A simple timespan for chrono times."
+documentation = "https://docs.rs/timespan/"
+homepage = "https://fin-ger.github.io/rust-timespan/"
+repository = "https://github.com/fin-ger/rust-timespan/"
+readme = "README.md"
+keywords = ["timespan", "chrono"]
+categories = ["date-and-time"]
+license = "GPL-3.0"
+
+[dependencies]
+chrono = "^0"
+regex = "^0"
+serde = { version = "^1", optional = true }
+
+[dev-dependencies]
+serde_json = "^1"
+serde_derive = "^1"
+
+[features]
+default = []
+
+with-serde = ["serde"]
+
+[badges]
+travis-ci = { repository = "https://github.com/fin-ger/rust-timespan/", branch = "master" }
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lib]
+test = true
+doctest = true
+bench = false
+doc = true
+crate-type = ["lib"]
+
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+
+[profile.test]
+opt-level = 3
+debug = true
+debug-assertions = false
+
+[profile.doc]
+opt-level = 3
+debug = false
+debug-assertions = false
