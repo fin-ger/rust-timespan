@@ -16,7 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use chrono;
+use chrono::{ParseError, ParseResult, Duration};
+use chrono::format::{DelayedFormat, StrftimeItems};
 use std::cmp::{PartialOrd, Ord};
 use std::clone::Clone;
 use std::ops::{Add, Sub};
@@ -24,7 +25,13 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 pub trait Spanable: Display + Copy + Clone +
-    FromStr<Err = chrono::ParseError> +
+    FromStr<Err = ParseError> +
     Ord + PartialOrd +
-    Add<chrono::Duration, Output = Self> + Sub<chrono::Duration, Output = Self>
-{}
+    Add<Duration, Output = Self> + Sub<Duration, Output = Self>
+{
+    fn format<'a>(&self, &'a str) -> DelayedFormat<StrftimeItems<'a>>;
+
+    fn signed_duration_since(self, Self) -> Duration;
+
+    fn parse_from_str(&str, &str) -> ParseResult<Self>;
+}

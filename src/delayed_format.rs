@@ -17,8 +17,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use Span;
+use Spanable;
 use std;
-use chrono;
 
 pub struct DelayedFormat<'a, T> {
     pub span: Span<T>,
@@ -27,7 +27,7 @@ pub struct DelayedFormat<'a, T> {
     pub end: &'a str,
 }
 
-impl<'a> std::fmt::Display for DelayedFormat<'a, chrono::NaiveTime> {
+impl<'a, T> std::fmt::Display for DelayedFormat<'a, T> where T: Spanable {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use std::fmt::Write;
 

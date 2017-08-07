@@ -16,48 +16,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Error;
 use Spanable;
 use Span;
-use chrono::{DateTime, FixedOffset, Duration};
-use regex;
-use regex::Regex;
+use chrono::format::{DelayedFormat, StrftimeItems};
+use chrono::{ParseResult, DateTime, FixedOffset, Duration};
 
-impl Spanable for DateTime<FixedOffset> {}
-
-pub type Datespan = Span<DateTime<FixedOffset>>;
-
-impl Span<DateTime<FixedOffset>> {
-    pub fn parse_from_str(s: &str, fmt: &str, start: &str, end: &str) -> Result<Span<DateTime<FixedOffset>>, Error> {
-        let esc = regex::escape(fmt);
-
-        let repl_re = Regex::new(r"(?:\\\{start\\\}|\\\{end\\\})").unwrap();
-        let repl = repl_re.replace_all(&esc, r"(.*)");
-
-        let re = Regex::new(&repl)?;
-        let caps = re.captures(s).ok_or(Error::Empty)?;
-
-        let start_idx = fmt.find("{start}").ok_or(Error::NoStart)?;
-        let end_idx = fmt.find("{end}").ok_or(Error::NoEnd)?;
-
-        // we already checked for the existance of {start} and {end} captures -> unwrap allowed
-        let m1 = caps.get(1).unwrap();
-        let m2 = caps.get(2).unwrap();
-
-        if start_idx < end_idx {
-            Span::new(
-                DateTime::parse_from_str(m1.as_str(), start)?,
-                DateTime::parse_from_str(m2.as_str(), end)?,
-            )
-        } else {
-            Span::new(
-                DateTime::parse_from_str(m2.as_str(), start)?,
-                DateTime::parse_from_str(m1.as_str(), end)?,
-            )
-        }
+impl Spanable for DateTime<FixedOffset> {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
+        DateTime::parse_from_str(s, fmt)
     }
 
-    pub fn duration(&self) -> Duration {
-        self.end.signed_duration_since(self.start)
+    #[inline]
+    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
+        DateTime::format(self, fmt)
+    }
+
+    #[inline]
+    fn signed_duration_since(self, other: Self) -> Duration {
+        DateTime::signed_duration_since(self, other)
     }
 }
+
+pub type Datespan = Span<DateTime<FixedOffset>>;

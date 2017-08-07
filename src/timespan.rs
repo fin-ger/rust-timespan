@@ -16,48 +16,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Error;
 use Spanable;
 use Span;
-use chrono::{NaiveTime, Duration};
-use regex;
-use regex::Regex;
+use chrono::format::{DelayedFormat, StrftimeItems};
+use chrono::{ParseResult, NaiveTime, Duration};
 
-impl Spanable for NaiveTime {}
-
-pub type Timespan = Span<NaiveTime>;
-
-impl Span<NaiveTime> {
-    pub fn parse_from_str(s: &str, fmt: &str, start: &str, end: &str) -> Result<Span<NaiveTime>, Error> {
-        let esc = regex::escape(fmt);
-
-        let repl_re = Regex::new(r"(?:\\\{start\\\}|\\\{end\\\})").unwrap();
-        let repl = repl_re.replace_all(&esc, r"(.*)");
-
-        let re = Regex::new(&repl)?;
-        let caps = re.captures(s).ok_or(Error::Empty)?;
-
-        let start_idx = fmt.find("{start}").ok_or(Error::NoStart)?;
-        let end_idx = fmt.find("{end}").ok_or(Error::NoEnd)?;
-
-        // we already checked for the existance of {start} and {end} captures -> unwrap allowed
-        let m1 = caps.get(1).unwrap();
-        let m2 = caps.get(2).unwrap();
-
-        if start_idx < end_idx {
-            Span::new(
-                NaiveTime::parse_from_str(m1.as_str(), start)?,
-                NaiveTime::parse_from_str(m2.as_str(), end)?,
-            )
-        } else {
-            Span::new(
-                NaiveTime::parse_from_str(m2.as_str(), start)?,
-                NaiveTime::parse_from_str(m1.as_str(), end)?,
-            )
-        }
+impl Spanable for NaiveTime {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
+        NaiveTime::parse_from_str(s, fmt)
     }
 
-    pub fn duration(&self) -> Duration {
-        self.end.signed_duration_since(self.start)
+    #[inline]
+    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
+        NaiveTime::format(self, fmt)
+    }
+
+    #[inline]
+    fn signed_duration_since(self, other: Self) -> Duration {
+        NaiveTime::signed_duration_since(self, other)
     }
 }
+
+pub type Timespan = Span<NaiveTime>;

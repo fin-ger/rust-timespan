@@ -37,9 +37,7 @@ mod delayed_format;
 mod error;
 
 #[cfg(test)]
-mod timespan_test;
-#[cfg(test)]
-mod datespan_test;
+mod span_test;
 #[cfg(test)]
 mod delayed_format_test;
 

@@ -20,6 +20,7 @@ use Error;
 use DelayedFormat;
 use Spanable;
 use chrono::Duration;
+use regex;
 use regex::Regex;
 use std;
 
@@ -41,6 +42,35 @@ impl<T> Span<T> where T: Spanable {
         })
     }
 
+    pub fn parse_from_str(s: &str, fmt: &str, start: &str, end: &str) -> Result<Span<T>, Error> {
+        let esc = regex::escape(fmt);
+
+        let repl_re = Regex::new(r"(?:\\\{start\\\}|\\\{end\\\})").unwrap();
+        let repl = repl_re.replace_all(&esc, r"(.*)");
+
+        let re = Regex::new(&repl)?;
+        let caps = re.captures(s).ok_or(Error::Empty)?;
+
+        let start_idx = fmt.find("{start}").ok_or(Error::NoStart)?;
+        let end_idx = fmt.find("{end}").ok_or(Error::NoEnd)?;
+
+        // we already checked for the existance of {start} and {end} captures -> unwrap allowed
+        let m1 = caps.get(1).unwrap();
+        let m2 = caps.get(2).unwrap();
+
+        if start_idx < end_idx {
+            Span::new(
+                T::parse_from_str(m1.as_str(), start)?,
+                T::parse_from_str(m2.as_str(), end)?,
+            )
+        } else {
+            Span::new(
+                T::parse_from_str(m2.as_str(), start)?,
+                T::parse_from_str(m1.as_str(), end)?,
+            )
+        }
+    }
+
     pub fn format<'a>(&self, fmt: &'a str, start: &'a str, end: &'a str) -> DelayedFormat<'a, T> {
         DelayedFormat {
             span: self.clone(),
@@ -48,6 +78,10 @@ impl<T> Span<T> where T: Spanable {
             start: start,
             end: end,
         }
+    }
+
+    pub fn duration(&self) -> Duration {
+        self.end.signed_duration_since(self.start)
     }
 
     pub fn difference(&self, other: &Span<T>) -> Result<Span<T>, Error> {
