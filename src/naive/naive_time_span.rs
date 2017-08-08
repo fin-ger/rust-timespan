@@ -16,21 +16,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use chrono::{ParseError, Duration};
+use Spanable;
+use ParseFromStr;
+use Span;
 use chrono::format::{DelayedFormat, StrftimeItems};
-use std::cmp::{PartialOrd, Ord};
-use std::clone::Clone;
-use std::ops::{Add, Sub};
-use std::fmt::Display;
-use std::marker::Copy;
-use std::str::FromStr;
+use chrono::{ParseResult, NaiveTime, Duration};
 
-pub trait Spanable: Display + Copy + Clone +
-    FromStr<Err = ParseError> +
-    Ord + PartialOrd +
-    Add<Duration, Output = Self> + Sub<Duration, Output = Self>
-{
-    fn format<'a>(&self, &'a str) -> DelayedFormat<StrftimeItems<'a>>;
+impl Spanable for NaiveTime {
+    #[inline]
+    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
+        NaiveTime::format(self, fmt)
+    }
 
-    fn signed_duration_since(self, Self) -> Duration;
+    #[inline]
+    fn signed_duration_since(self, other: Self) -> Duration {
+        NaiveTime::signed_duration_since(self, other)
+    }
 }
+
+impl ParseFromStr for NaiveTime {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
+        NaiveTime::parse_from_str(s, fmt)
+    }
+}
+
+pub type NaiveTimeSpan = Span<NaiveTime>;

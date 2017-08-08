@@ -16,21 +16,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use chrono::{ParseError, Duration};
+use Spanable;
+use Span;
 use chrono::format::{DelayedFormat, StrftimeItems};
-use std::cmp::{PartialOrd, Ord};
-use std::clone::Clone;
-use std::ops::{Add, Sub};
-use std::fmt::Display;
-use std::marker::Copy;
-use std::str::FromStr;
+use chrono::{ParseError, DateTime, TimeZone, Duration};
+use std;
 
-pub trait Spanable: Display + Copy + Clone +
-    FromStr<Err = ParseError> +
-    Ord + PartialOrd +
-    Add<Duration, Output = Self> + Sub<Duration, Output = Self>
-{
-    fn format<'a>(&self, &'a str) -> DelayedFormat<StrftimeItems<'a>>;
+impl<T> Spanable for DateTime<T>
+where
+    T: TimeZone,
+    DateTime<T>: std::fmt::Display + std::str::FromStr<Err = ParseError>,
+    <T as TimeZone>::Offset: std::marker::Copy + std::fmt::Display {
+    #[inline]
+    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
+        DateTime::format(self, fmt)
+    }
 
-    fn signed_duration_since(self, Self) -> Duration;
+    #[inline]
+    fn signed_duration_since(self, other: Self) -> Duration {
+        DateTime::signed_duration_since(self, other)
+    }
 }
+
+pub type DateTimeSpan<T> = Span<DateTime<T>>;

@@ -29,21 +29,28 @@ extern crate serde_derive;
 extern crate chrono;
 extern crate regex;
 
+mod error;
+mod delayed_format;
 mod span;
 mod spanable;
-mod timespan;
-mod datespan;
-mod delayed_format;
-mod error;
+mod parse_from_str;
+mod date_span;
+mod date_time_span;
+
+pub mod naive;
 
 #[cfg(test)]
 mod span_test;
 #[cfg(test)]
 mod delayed_format_test;
 
+pub use self::error::Error;
+pub use self::delayed_format::DelayedFormat;
 pub use self::span::Span;
 pub use self::spanable::Spanable;
-pub use self::timespan::Timespan;
-pub use self::datespan::Datespan;
-pub use self::delayed_format::DelayedFormat;
-pub use self::error::Error;
+pub use self::parse_from_str::ParseFromStr;
+pub use self::date_span::DateSpan;
+pub use self::date_time_span::DateTimeSpan;
+pub use self::naive::NaiveDateSpan;
+pub use self::naive::NaiveDateTimeSpan;
+pub use self::naive::NaiveTimeSpan;

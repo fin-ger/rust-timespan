@@ -16,21 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use chrono::{ParseError, Duration};
-use chrono::format::{DelayedFormat, StrftimeItems};
-use std::cmp::{PartialOrd, Ord};
-use std::clone::Clone;
-use std::ops::{Add, Sub};
-use std::fmt::Display;
-use std::marker::Copy;
-use std::str::FromStr;
+mod naive_date_span;
+mod naive_date_time_span;
+mod naive_time_span;
 
-pub trait Spanable: Display + Copy + Clone +
-    FromStr<Err = ParseError> +
-    Ord + PartialOrd +
-    Add<Duration, Output = Self> + Sub<Duration, Output = Self>
-{
-    fn format<'a>(&self, &'a str) -> DelayedFormat<StrftimeItems<'a>>;
-
-    fn signed_duration_since(self, Self) -> Duration;
-}
+pub use self::naive_date_span::NaiveDateSpan;
+pub use self::naive_date_time_span::NaiveDateTimeSpan;
+pub use self::naive_time_span::NaiveTimeSpan;

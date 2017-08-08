@@ -17,25 +17,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use Spanable;
+use ParseFromStr;
 use Span;
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{ParseResult, DateTime, FixedOffset, Duration};
+use chrono::{ParseResult, NaiveDateTime, Duration};
 
-impl Spanable for DateTime<FixedOffset> {
-    #[inline]
-    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
-        DateTime::parse_from_str(s, fmt)
-    }
-
+impl Spanable for NaiveDateTime {
     #[inline]
     fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
-        DateTime::format(self, fmt)
+        NaiveDateTime::format(self, fmt)
     }
 
     #[inline]
     fn signed_duration_since(self, other: Self) -> Duration {
-        DateTime::signed_duration_since(self, other)
+        NaiveDateTime::signed_duration_since(self, other)
     }
 }
 
-pub type Datespan = Span<DateTime<FixedOffset>>;
+impl ParseFromStr for NaiveDateTime {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
+        NaiveDateTime::parse_from_str(s, fmt)
+    }
+}
+
+pub type NaiveDateTimeSpan = Span<NaiveDateTime>;

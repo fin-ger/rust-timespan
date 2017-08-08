@@ -16,26 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Spanable;
-use Span;
-use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{ParseResult, NaiveTime, Duration};
+use chrono::ParseResult ;
 
-impl Spanable for NaiveTime {
-    #[inline]
-    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
-        NaiveTime::parse_from_str(s, fmt)
-    }
-
-    #[inline]
-    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
-        NaiveTime::format(self, fmt)
-    }
-
-    #[inline]
-    fn signed_duration_since(self, other: Self) -> Duration {
-        NaiveTime::signed_duration_since(self, other)
-    }
+pub trait ParseFromStr {
+    fn parse_from_str(&str, &str) -> ParseResult<Self> where Self: Sized;
 }
-
-pub type Timespan = Span<NaiveTime>;
