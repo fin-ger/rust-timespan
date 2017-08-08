@@ -213,17 +213,15 @@ impl<T> std::str::FromStr for Span<T> where T: Spanable {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let re = Regex::new(r"\s*-\s*").unwrap();
-        let mut span: Vec<&str> = re.splitn(s, 2).collect();
+        let re = Regex::new(r"(.*)\s+-\s+(.*)").unwrap();
+        let caps = re.captures(s).ok_or(Error::Empty)?;
 
-        // make sure span[1], etc. do not go out of bounds.
-        while span.len() < 2 {
-            span.push("");
-        }
+        let c1 = caps.get(1).ok_or(Error::NoStart)?;
+        let c2 = caps.get(2).ok_or(Error::NoEnd)?;
 
         Span::new(
-            T::from_str(span[0])?,
-            T::from_str(span[1])?,
+            T::from_str(c1.as_str())?,
+            T::from_str(c2.as_str())?,
         )
     }
 }

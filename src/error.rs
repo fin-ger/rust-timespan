@@ -31,6 +31,7 @@ pub enum Error {
     NotContinuous,
     NoStart,
     NoEnd,
+    LocalAmbigious,
 }
 
 impl std::fmt::Display for Error {
@@ -54,6 +55,7 @@ impl StdError for Error {
             Error::NotContinuous => "The resulting span is not continuous",
             Error::NoStart => "The resulting span has no start value",
             Error::NoEnd => "The resulting span has no end value",
+            Error::LocalAmbigious => "The resulting local time is ambigious",
         }
     }
 }

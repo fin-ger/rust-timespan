@@ -16,8 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use Error;
 use Spanable;
 use Span;
+use NaiveDateTimeSpan;
 use chrono::format::{DelayedFormat, StrftimeItems};
 use chrono::{ParseError, DateTime, TimeZone, Duration};
 use std;
@@ -39,3 +41,19 @@ where
 }
 
 pub type DateTimeSpan<T> = Span<DateTime<T>>;
+
+impl<T: TimeZone> DateTimeSpan<T> {
+    pub fn from_local_datetimespan(span: &NaiveDateTimeSpan, tz: &T) -> Result<Self, Error> {
+        Ok(DateTimeSpan {
+            start: tz.from_local_datetime(&span.start).single().ok_or(Error::LocalAmbigious)?,
+            end: tz.from_local_datetime(&span.end).single().ok_or(Error::LocalAmbigious)?,
+        })
+    }
+
+    pub fn from_utc_datetimespan(span: &NaiveDateTimeSpan, tz: &T) -> Self {
+        DateTimeSpan {
+            start: tz.from_utc_datetime(&span.start),
+            end: tz.from_utc_datetime(&span.end),
+        }
+    }
+}

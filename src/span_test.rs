@@ -284,7 +284,7 @@ fn from_str_test() {
     assert!(parsed == parsed_reference);
 
     assert!(NaiveTimeSpan::from_str("10.45.00 - 15.30.00").is_err());
-    assert!(NaiveTimeSpan::from_str("09:15:00-12:00:00").is_ok());
+    assert!(NaiveTimeSpan::from_str("09:15:00-12:00:00").is_err());
     assert!(NaiveTimeSpan::from_str("11:11").is_err());
     assert!(NaiveTimeSpan::from_str("").is_err());
 }
