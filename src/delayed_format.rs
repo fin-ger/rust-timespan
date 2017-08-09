@@ -18,8 +18,16 @@
 
 use Span;
 use Spanable;
+use Formatable;
 use std;
 
+/// An instance of this type gets created when issuing a `format` on a span.
+///
+/// In theory this approach for formatting reduces the amount of memory used but the
+/// implementation is currently using more memory than it should.
+///
+/// Therefore this only eases the handling when formatting spans with a custom format
+/// string.
 pub struct DelayedFormat<'a, T> {
     pub span: Span<T>,
     pub fmt: &'a str,
@@ -27,7 +35,7 @@ pub struct DelayedFormat<'a, T> {
     pub end: &'a str,
 }
 
-impl<'a, T> std::fmt::Display for DelayedFormat<'a, T> where T: Spanable {
+impl<'a, T> std::fmt::Display for DelayedFormat<'a, T> where T: Spanable + Formatable {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use std::fmt::Write;
 

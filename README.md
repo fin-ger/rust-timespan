@@ -37,6 +37,15 @@ In order to run an example from the `example` folder issue the following command
 $ cargo run --example <name>
 ```
 
+### convert
+ - `NaiveDateTimeSpan::parse_from_str` of s, fmt, start, end -> `NaiveDateTimeSpan::format` with fmt, start, end
+
+### duration
+ - `NaiveDateTimeSpan::parse_from_str` of s, fmt, start, end -> `NaiveDateTimeSpan::duration`
+
+### contains
+ - `NaiveDateTimeSpan::parse_from_str` of s, fmt, start, end -> `NaiveDateTimeSpan::contains`
+
 ## License
 
 This project is licensed under the GPL-v3 license - see the [LICENSE](LICENSE) file for details.

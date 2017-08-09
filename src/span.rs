@@ -19,7 +19,8 @@
 use Error;
 use DelayedFormat;
 use Spanable;
-use ParseFromStr;
+use Formatable;
+use Parsable;
 use chrono::Duration;
 use regex;
 use regex::Regex;
@@ -41,15 +42,6 @@ impl<T> Span<T> where T: Spanable {
             start: start,
             end: end,
         })
-    }
-
-    pub fn format<'a>(&self, fmt: &'a str, start: &'a str, end: &'a str) -> DelayedFormat<'a, T> {
-        DelayedFormat {
-            span: self.clone(),
-            fmt: fmt,
-            start: start,
-            end: end,
-        }
     }
 
     pub fn duration(&self) -> Duration {
@@ -178,7 +170,18 @@ impl<T> Span<T> where T: Spanable {
     }
 }
 
-impl<T> Span<T> where T: Spanable + ParseFromStr {
+impl<T> Span<T> where T: Spanable + Formatable {
+    pub fn format<'a>(&self, fmt: &'a str, start: &'a str, end: &'a str) -> DelayedFormat<'a, T> {
+        DelayedFormat {
+            span: self.clone(),
+            fmt: fmt,
+            start: start,
+            end: end,
+        }
+    }
+}
+
+impl<T> Span<T> where T: Spanable + Parsable {
     pub fn parse_from_str(s: &str, fmt: &str, start: &str, end: &str) -> Result<Span<T>, Error> {
         let esc = regex::escape(fmt);
 
@@ -209,7 +212,7 @@ impl<T> Span<T> where T: Spanable + ParseFromStr {
     }
 }
 
-impl<T> std::str::FromStr for Span<T> where T: Spanable {
+impl<T> std::str::FromStr for Span<T> where T: Spanable + Parsable {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -226,13 +229,13 @@ impl<T> std::str::FromStr for Span<T> where T: Spanable {
     }
 }
 
-impl<T> std::fmt::Debug for Span<T> where T: Spanable {
+impl<T> std::fmt::Debug for Span<T> where T: Spanable + Formatable {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} - {}", self.start, self.end)
     }
 }
 
-impl<T> std::fmt::Display for Span<T> where T: Spanable {
+impl<T> std::fmt::Display for Span<T> where T: Spanable + Formatable {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         std::fmt::Debug::fmt(self, f)
     }
@@ -242,11 +245,13 @@ impl<T> std::fmt::Display for Span<T> where T: Spanable {
 mod with_serde {
     use super::Span;
     use super::Spanable;
+    use super::Formatable;
+    use super::Parsable;
     use serde::{de, ser};
     use std::marker::PhantomData;
     use std::fmt;
 
-    impl<T> ser::Serialize for Span<T> where T: Spanable {
+    impl<T> ser::Serialize for Span<T> where T: Spanable + Formatable {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: ser::Serializer,
@@ -259,7 +264,7 @@ mod with_serde {
         phantom: PhantomData<T>,
     }
 
-    impl<'de, T> de::Visitor<'de> for SpanVisitor<T> where T: Spanable {
+    impl<'de, T> de::Visitor<'de> for SpanVisitor<T> where T: Spanable + Parsable {
         type Value = Span<T>;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -274,7 +279,7 @@ mod with_serde {
         }
     }
 
-    impl<'de, T> de::Deserialize<'de> for Span<T> where T: Spanable {
+    impl<'de, T> de::Deserialize<'de> for Span<T> where T: Spanable + Parsable {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: de::Deserializer<'de>,

@@ -20,21 +20,17 @@ extern crate timespan;
 extern crate chrono;
 extern crate chrono_tz;
 
+use chrono::offset::TimeZone;
 use chrono_tz::Europe::Berlin;
-use chrono::Utc;
 use timespan::DateTimeSpan;
 
 #[test]
 fn tatort() {
-    // support for something like "2017-08-03CEST - 2017-08-05CEST" is missing for now
-    let _span = DateTimeSpan::from_utc_datetimespan(&"2017-04-02T20:15:00 - 2017-04-02T21:45:00".parse().unwrap(), &Berlin);
+    // support for something like "2017-04-02 20:15:00 CEST - 2017-04-02 21:45:00 CEST" is missing for now
+    // -> chrono_tz::Tz is not implementing from_str and parse_from_str for DateTime
+    let span = DateTimeSpan::from_utc_datetimespan(&"2017-04-02T18:15:00 - 2017-04-02T19:45:00".parse().unwrap(), &Berlin);
 
-    // not working as chrono_tz::Tz is not implementing std::fmt::Display
-    //assert!(span.contains(&"2017-04-02T20:37:21CEST".parse().unwrap()));
-    //assert!(!span.contains(&"2017-04-02T22:12:19CEST".parse().unwrap()));
-
-    let span = DateTimeSpan::from_utc_datetimespan(&"2017-04-02T20:15:00 - 2017-04-02T21:45:00".parse().unwrap(), &Utc);
-
-    assert!(span.contains(&"2017-04-02T20:37:21+00:00".parse().unwrap()));
-    assert!(!span.contains(&"2017-04-02T22:12:19+00:00".parse().unwrap()));
+    assert!(span.contains(&Berlin.from_utc_datetime(&"2017-04-02T18:34:53".parse().unwrap())));
+    assert!(!span.contains(&Berlin.from_utc_datetime(&"2017-04-03T20:12:19".parse().unwrap())));
+    assert!(format!("{}", span) == "2017-04-02 20:15:00 CEST - 2017-04-02 21:45:00 CEST");
 }

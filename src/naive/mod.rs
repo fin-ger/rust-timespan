@@ -16,6 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+//! Date and time spans which do not concern about timezones.
+//!
+//! These time spans can be used for applications where the timezone is
+//! irrelevant for the span.
+
 mod naive_date_span;
 mod naive_date_time_span;
 mod naive_time_span;

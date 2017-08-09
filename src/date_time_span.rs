@@ -18,31 +18,86 @@
 
 use Error;
 use Spanable;
+use Formatable;
+use Parsable;
 use Span;
 use NaiveDateTimeSpan;
+use chrono::offset::{Local, Utc, FixedOffset};
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{ParseError, DateTime, TimeZone, Duration};
+use chrono::{ParseResult, DateTime, TimeZone, Duration};
 use std;
 
-impl<T> Spanable for DateTime<T>
-where
-    T: TimeZone,
-    DateTime<T>: std::fmt::Display + std::str::FromStr<Err = ParseError>,
-    <T as TimeZone>::Offset: std::marker::Copy + std::fmt::Display {
-    #[inline]
-    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
-        DateTime::format(self, fmt)
-    }
-
+impl<T: TimeZone> Spanable for DateTime<T> where <T as TimeZone>::Offset: std::marker::Copy {
     #[inline]
     fn signed_duration_since(self, other: Self) -> Duration {
         DateTime::signed_duration_since(self, other)
     }
 }
 
+impl<T: TimeZone> Formatable for DateTime<T> where <T as TimeZone>::Offset: std::fmt::Display {
+    #[inline]
+    fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
+        DateTime::format(self, fmt)
+    }
+}
+
+impl Parsable for DateTime<Local> {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<DateTime<Local>> {
+        Local.datetime_from_str(s, fmt)
+    }
+}
+
+impl Parsable for DateTime<Utc> {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<DateTime<Utc>> {
+        Utc.datetime_from_str(s, fmt)
+    }
+}
+
+impl Parsable for DateTime<FixedOffset> {
+    #[inline]
+    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<DateTime<FixedOffset>> {
+        DateTime::parse_from_str(s, fmt)
+    }
+}
+
+/// The `DateTimeSpan` alias is a span consisting of `chrono::DateTime`s.
+///
+/// It can be used to represent datetime spans that depend on a specific time zone.
+///
+/// The `DateTimeSpan` can be formatted and parsed from a string. It can be used for serialization
+/// and deserialization with `serde`. The deserialization is currently only supported for the
+/// `Utc`, `Local` and `FixedOffset` time zones. The time zones provided by `chrono-tz` do not
+/// implement `from_str` and `parse_from_str` for `chrono::DateTime<Tz>` and can therefore not be
+/// deserialized.
+///
+/// # Example
+///
+/// ~~~~
+/// # extern crate timespan; extern crate chrono; fn main() {
+/// use timespan::DateTimeSpan;
+/// use chrono::Utc;
+///
+/// let a: DateTimeSpan<Utc> = "2017-01-01T15:10:00 +0200 - 2017-01-02T09:30:00 +0200"
+///    .parse().unwrap();
+///
+/// assert!(
+///     format!("{}", a.format("{start} to {end}", "%c", "%c")) ==
+///     "Sun Jan  1 13:10:00 2017 to Mon Jan  2 07:30:00 2017"
+/// );
+/// # }
+/// ~~~~
 pub type DateTimeSpan<T> = Span<DateTime<T>>;
 
 impl<T: TimeZone> DateTimeSpan<T> {
+    /// Create a `DateTimeSpan` from a `NaiveDateTimeSpan` with the time zone set to the local time zone.
+    ///
+    /// Currently the result handling of the internally used `TimeZone::from_local_datetime` is not
+    /// implemented properly. Therefore only date spans with a single local time zone can be created.
+    /// Ambigious local time zones will lead to `Error::LocalAmbigious`.
+    ///
+    /// To avoid this `from_utc_datetimespan` should be prefered.
     pub fn from_local_datetimespan(span: &NaiveDateTimeSpan, tz: &T) -> Result<Self, Error> {
         Ok(DateTimeSpan {
             start: tz.from_local_datetime(&span.start).single().ok_or(Error::LocalAmbigious)?,
@@ -50,6 +105,23 @@ impl<T: TimeZone> DateTimeSpan<T> {
         })
     }
 
+    /// Create a `DateTimeSpan` from a `NaiveDateTimeSpan` with the time zone set to UTC.
+    ///
+    /// # Example
+    ///
+    /// ~~~~
+    /// # extern crate timespan; extern crate chrono_tz; fn main() {
+    /// use timespan::DateTimeSpan;
+    /// use chrono_tz::America::Puerto_Rico;
+    ///
+    /// let a = DateTimeSpan::from_utc_datetimespan(
+    ///     &"2017-03-12T12:00:00 - 2017-03-15T14:00:00".parse().unwrap(),
+    ///     &Puerto_Rico,
+    /// );
+    ///
+    /// assert!(format!("{}", a) == "2017-03-12 08:00:00 AST - 2017-03-15 10:00:00 AST");
+    /// # }
+    /// ~~~~
     pub fn from_utc_datetimespan(span: &NaiveDateTimeSpan, tz: &T) -> Self {
         DateTimeSpan {
             start: tz.from_utc_datetime(&span.start),

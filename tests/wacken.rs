@@ -20,24 +20,17 @@ extern crate timespan;
 extern crate chrono;
 extern crate chrono_tz;
 
+use chrono::TimeZone;
 use chrono_tz::Europe::Berlin;
-use chrono::Utc;
 use timespan::DateSpan;
 
 #[test]
 fn wacken() {
     // support for something like "2017-08-03CEST - 2017-08-05CEST" is missing for now
-    let _span = DateSpan::from_utc_datespan(&"2017-08-03 - 2017-08-05".parse().unwrap(), &Berlin);
+    // -> chrono_tz::Tz, Utc, Local and FixedOffset are not implementing from_str and parse_from_str for Date
+    let span = DateSpan::from_utc_datespan(&"2017-08-03 - 2017-08-05".parse().unwrap(), &Berlin);
 
-    // not working as chrono_tz::Tz is not implementing std::fmt::Display
-    //assert!(span.contains(&"2017-08-04CEST".parse().unwrap()));
-    //assert!(!span.contains(&"2017-07-16CEST".parse().unwrap()));
-
-    // Date has no serialization and deserialization features, so it's not Spannable for now
-    // A Span should be independent from serialization and deserialization as well
-    // -> TODO
-    //let span = DateSpan::from_utc_datespan(&"2017-08-03 - 2017-08-05".parse().unwrap(), &Utc);
-
-    //assert!(span.contains(&"2017-08-04+00:00".parse().unwrap()));
-    //assert!(!span.contains(&"2017-07-02+00:00".parse().unwrap()));
+    assert!(span.contains(&Berlin.from_utc_date(&"2017-08-04".parse().unwrap())));
+    assert!(!span.contains(&Berlin.from_utc_date(&"2017-07-22".parse().unwrap())));
+    assert!(format!("{}", span) == "2017-08-03CEST - 2017-08-05CEST");
 }

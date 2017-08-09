@@ -21,16 +21,27 @@ use regex;
 use std;
 use std::error::Error as StdError;
 
+/// This error describes errors that can occur when operating on spans.
 #[derive(Debug)]
 pub enum Error {
+    /// A span could not be parsed from a string.
     Parsing(chrono::ParseError),
+    /// This occurs when a regex failed to compile or match.
+    /// This is usually associated with a parsing operation.
     Regex(regex::Error),
+    /// The bounds of the span are not in the correct order.
     Ordering,
+    /// An operation accessed time slots that are outside the bounds of the span.
     OutOfRange,
+    /// The span has a duration of zero.
     Empty,
+    /// An operation would split a span in two.
     NotContinuous,
+    /// The span has no start time.
     NoStart,
+    /// The span has no end time.
     NoEnd,
+    /// The local time zone is ambigious.
     LocalAmbigious,
 }
 
