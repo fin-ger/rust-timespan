@@ -1,6 +1,6 @@
 [package]
 name = "timespan"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Fin Christensen <christensen.fin@gmail.com>"]
 description = "A simple timespan for chrono times."
 documentation = "https://docs.rs/timespan/"
@@ -27,7 +27,7 @@ default = []
 with-serde = ["serde"]
 
 [badges]
-travis-ci = { repository = "https://github.com/fin-ger/rust-timespan/", branch = "master" }
+travis-ci = { repository = "fin-ger/rust-timespan/", branch = "master" }
 
 [package.metadata.docs.rs]
 all-features = true
