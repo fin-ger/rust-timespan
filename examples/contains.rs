@@ -1,4 +1,5 @@
-// convert - A simple cli to parse and format timespans.
+// contains - A simple cli to check whether a given point in time is
+//            included in a given timespan.
 //
 // Copyright (C) 2017
 //     Fin Christensen <christensen.fin@gmail.com>
@@ -17,39 +18,38 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern crate timespan;
+extern crate chrono;
 
 use timespan::NaiveTimeSpan;
+use chrono::NaiveTime;
 
 fn usage() {
-    println!("Please provide exactly 7 arguments!
+    println!("Please provide exactly 6 arguments!
 
-Usage: [span]
-       [from_span_fmt] [from_start_fmt] [from_end_fmt]
-       [to_span_fmt] [to_start_fmt] [to_end_fmt]");
+Usage: [span] [point] [span_fmt] [start_fmt] [end_fmt] [point_fmt]");
 }
 
 fn main() {
     let mut args = std::env::args();
 
-    if args.len() != 8 {
+    if args.len() != 7 {
         usage();
         std::process::exit(1);
     }
 
     args.next();
     let s = args.next().unwrap();
-    let from_span_fmt = args.next().unwrap();
-    let from_start_fmt = args.next().unwrap();
-    let from_end_fmt = args.next().unwrap();
-    let to_span_fmt = args.next().unwrap();
-    let to_start_fmt = args.next().unwrap();
-    let to_end_fmt = args.next().unwrap();
+    let p = args.next().unwrap();
+    let span_fmt = args.next().unwrap();
+    let start_fmt = args.next().unwrap();
+    let end_fmt = args.next().unwrap();
+    let p_fmt = args.next().unwrap();
 
     let span = match NaiveTimeSpan::parse_from_str(
         s.as_str(),
-        from_span_fmt.as_str(),
-        from_start_fmt.as_str(),
-        from_end_fmt.as_str(),
+        span_fmt.as_str(),
+        start_fmt.as_str(),
+        end_fmt.as_str(),
     ) {
         Ok(s) => s,
         Err(e) => {
@@ -57,5 +57,11 @@ fn main() {
             std::process::exit(2);
         },
     };
-    println!("{}", span.format(to_span_fmt.as_str(), to_start_fmt.as_str(), to_end_fmt.as_str()));
+
+    let point = NaiveTime::parse_from_str(p.as_str(), p_fmt.as_str()).unwrap();
+    let c = span.contains(&point);
+
+    println!("{} {} {}", span, if c { "contains" } else { "does not contain" }, point);
+
+    std::process::exit(!c as i32);
 }

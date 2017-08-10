@@ -166,6 +166,34 @@
 //! $ cargo run --example <name>
 //! ```
 //!
+//! ### The `convert` Example
+//!
+//! Convert `from 10.30 to 14.00` to `10:30 - 14:00`:
+//!
+//! ```sh
+//! $ cargo run --example convert -- "from 10.30 to 14.00" \
+//!     "from {start} to {end}" "%H.%M" "%H.%M" \
+//!     "{start} - {end}" "%R" "%R"
+//! ```
+//!
+//! ### The `duration` Example
+//!
+//! Get the duration of the time span `from 10.30 to 14.00`:
+//!
+//! ```sh
+//! $ cargo run --example duration -- "from 10.30 to 14.00" \
+//!     "from {start} to {end}" "%H.%M" "%H.%M"
+//! ```
+//!
+//! ### The `contains` Example
+//!
+//! Get whether `11.20` is contained in the time span `from 10.30 to 14.00`:
+//!
+//! ```sh
+//! $ cargo run --example contains -- "from 10.30 to 14.00" "11.20" \
+//!     "from {start} to {end}" "%H.%M" "%H.%M" "%H.%M"
+//! ```
+//!
 //! ## License
 //!
 //! This project is licensed under the GPL-v3 license - see the [LICENSE](LICENSE) file for details.
