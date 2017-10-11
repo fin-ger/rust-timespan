@@ -1,6 +1,6 @@
 [package]
 name = "timespan"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["Fin Christensen <christensen.fin@gmail.com>"]
 description = "A simple timespan for chrono times."
 documentation = "https://docs.rs/timespan/"
@@ -15,6 +15,7 @@ license = "GPL-3.0"
 chrono = "^0"
 regex = "^0"
 serde = { version = "^1", optional = true }
+chrono-tz = { version = "^0", optional = true }
 
 [dev-dependencies]
 serde_json = "^1"
@@ -25,6 +26,7 @@ chrono-tz = "^0"
 default = []
 
 with-serde = ["serde"]
+with-chrono-tz = ["chrono-tz"]
 
 [badges]
 travis-ci = { repository = "fin-ger/rust-timespan/", branch = "master" }

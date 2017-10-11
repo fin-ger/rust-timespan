@@ -16,12 +16,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use Error;
 use Spanable;
 use Formatable;
 use Parsable;
 use Span;
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{ParseResult, NaiveDateTime, Duration};
+use chrono::{NaiveDateTime, Duration};
 
 impl Spanable for NaiveDateTime {
     #[inline]
@@ -39,8 +40,8 @@ impl Formatable for NaiveDateTime {
 
 impl Parsable for NaiveDateTime {
     #[inline]
-    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<Self> {
-        NaiveDateTime::parse_from_str(s, fmt)
+    fn parse_from_str(s: &str, fmt: &str) -> Result<Self, Error> {
+        NaiveDateTime::parse_from_str(s, fmt).map_err(|e| Error::Parsing(e))
     }
 }
 

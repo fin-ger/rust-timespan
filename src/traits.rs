@@ -16,8 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use chrono::{ParseError, ParseResult, Duration};
-use chrono::format::{DelayedFormat, StrftimeItems};
+use Error;
+use chrono::Duration;
+use chrono::format::{ParseError, DelayedFormat, StrftimeItems};
 use std::cmp::{PartialOrd, Ord};
 use std::clone::Clone;
 use std::ops::{Add, Sub};
@@ -38,7 +39,7 @@ pub trait Spanable: Copy + Clone +
 /// to a span instance.
 pub trait Parsable: FromStr<Err = ParseError> {
     /// This is a wrapper method to the `parse_from_str` method from `chrono`.
-    fn parse_from_str(&str, &str) -> ParseResult<Self> where Self: Sized;
+    fn parse_from_str(&str, &str) -> Result<Self, Error> where Self: Sized;
 }
 
 /// Spanable types that are formatable can be used to serialize a given span

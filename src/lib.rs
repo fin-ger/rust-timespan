@@ -211,6 +211,9 @@ extern crate serde_derive;
 extern crate chrono;
 extern crate regex;
 
+#[cfg(feature = "chrono-tz")]
+extern crate chrono_tz;
+
 mod error;
 mod delayed_format;
 mod span;

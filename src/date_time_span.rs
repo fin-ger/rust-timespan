@@ -24,41 +24,41 @@ use Span;
 use NaiveDateTimeSpan;
 use chrono::offset::{Local, Utc, FixedOffset};
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{ParseResult, DateTime, TimeZone, Duration};
+use chrono::{DateTime as ChronoDateTime, TimeZone, Duration};
 use std;
 
-impl<T: TimeZone> Spanable for DateTime<T> where <T as TimeZone>::Offset: std::marker::Copy {
+impl<T: TimeZone> Spanable for ChronoDateTime<T> where <T as TimeZone>::Offset: std::marker::Copy {
     #[inline]
     fn signed_duration_since(self, other: Self) -> Duration {
-        DateTime::signed_duration_since(self, other)
+        ChronoDateTime::signed_duration_since(self, other)
     }
 }
 
-impl<T: TimeZone> Formatable for DateTime<T> where <T as TimeZone>::Offset: std::fmt::Display {
+impl<T: TimeZone> Formatable for ChronoDateTime<T> where <T as TimeZone>::Offset: std::fmt::Display {
     #[inline]
     fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
-        DateTime::format(self, fmt)
+        ChronoDateTime::format(self, fmt)
     }
 }
 
-impl Parsable for DateTime<Local> {
+impl Parsable for ChronoDateTime<Local> {
     #[inline]
-    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<DateTime<Local>> {
-        Local.datetime_from_str(s, fmt)
+    fn parse_from_str(s: &str, fmt: &str) -> Result<ChronoDateTime<Local>, Error> {
+        Local.datetime_from_str(s, fmt).map_err(|e| Error::Parsing(e))
     }
 }
 
-impl Parsable for DateTime<Utc> {
+impl Parsable for ChronoDateTime<Utc> {
     #[inline]
-    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<DateTime<Utc>> {
-        Utc.datetime_from_str(s, fmt)
+    fn parse_from_str(s: &str, fmt: &str) -> Result<ChronoDateTime<Utc>, Error> {
+        Utc.datetime_from_str(s, fmt).map_err(|e| Error::Parsing(e))
     }
 }
 
-impl Parsable for DateTime<FixedOffset> {
+impl Parsable for ChronoDateTime<FixedOffset> {
     #[inline]
-    fn parse_from_str(s: &str, fmt: &str) -> ParseResult<DateTime<FixedOffset>> {
-        DateTime::parse_from_str(s, fmt)
+    fn parse_from_str(s: &str, fmt: &str) -> Result<ChronoDateTime<FixedOffset>, Error> {
+        ChronoDateTime::parse_from_str(s, fmt).map_err(|e| Error::Parsing(e))
     }
 }
 
@@ -88,7 +88,7 @@ impl Parsable for DateTime<FixedOffset> {
 /// );
 /// # }
 /// ~~~~
-pub type DateTimeSpan<T> = Span<DateTime<T>>;
+pub type DateTimeSpan<T> = Span<ChronoDateTime<T>>;
 
 impl<T: TimeZone> DateTimeSpan<T> {
     /// Create a `DateTimeSpan` from a `NaiveDateTimeSpan` with the time zone set to the local time zone.
@@ -126,6 +126,83 @@ impl<T: TimeZone> DateTimeSpan<T> {
         DateTimeSpan {
             start: tz.from_utc_datetime(&span.start),
             end: tz.from_utc_datetime(&span.end),
+        }
+    }
+}
+
+#[cfg(feature = "with-chrono-tz")]
+pub use self::with_chrono_tz::DateTime;
+
+#[cfg(feature = "with-chrono-tz")]
+mod with_chrono_tz {
+    use super::Error;
+    use super::Parsable;
+    use super::DateTimeSpan;
+    use regex::Regex;
+    use chrono::{TimeZone, DateTime as ChronoDateTime, ParseError};
+    use chrono_tz::Tz;
+    use std::convert::From;
+    use std::str::FromStr;
+
+    pub struct DateTime<T: TimeZone>(pub ChronoDateTime<T>);
+
+    impl<T: TimeZone> From<ChronoDateTime<T>> for DateTime<T> {
+        fn from(dt: ChronoDateTime<T>) -> DateTime<T> {
+            DateTime(dt)
+        }
+    }
+
+    impl FromStr for DateTime<Tz> {
+        type Err = ParseError;
+
+        #[inline]
+        fn from_str(s: &str) -> Result<Self, ParseError> {
+            // this is very unsafe:
+            // All Options and Results get unwrapped as we cannot create a ParseError
+
+            let re = Regex::new(r"(.*)\s+(\w+)$").unwrap();
+            let caps = re.captures(s).unwrap();
+
+            let c1 = caps.get(1).map(|m| m.as_str()).unwrap();
+            let c2 = caps.get(2).map(|m| m.as_str()).unwrap();
+
+            let tz = c2.parse::<Tz>().unwrap();
+            Tz::datetime_from_str(&tz, &c1, "%F %T")
+                .map(|dt| DateTime(dt))
+        }
+    }
+
+    impl Parsable for DateTime<Tz> {
+        #[inline]
+        fn parse_from_str(s: &str, fmt: &str) -> Result<DateTime<Tz>, Error> {
+            let re = Regex::new(r"(.*)\s+(\w+)$").unwrap();
+            let caps = re.captures(s).ok_or(Error::BadFormat)?;
+
+            let c1 = caps.get(1).map(|m| m.as_str()).ok_or(Error::BadFormat)?;
+            let c2 = caps.get(2).map(|m| m.as_str()).ok_or(Error::BadFormat)?;
+
+            let tz = c2.parse::<Tz>().map_err(|_| Error::BadFormat)?;
+            Tz::datetime_from_str(&tz, &c1, fmt)
+                .map(|dt| DateTime(dt))
+                .map_err(|e| Error::Parsing(e))
+        }
+    }
+
+    /// Parses a `Span` from a string in the format `{start} - {end}`.
+    impl FromStr for DateTimeSpan<Tz> {
+        type Err = Error;
+
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            let re = Regex::new(r"(.*)\s+-\s+(.*)").unwrap();
+            let caps = re.captures(s).ok_or(Error::Empty)?;
+
+            let c1 = caps.get(1).ok_or(Error::NoStart)?;
+            let c2 = caps.get(2).ok_or(Error::NoEnd)?;
+
+            DateTimeSpan::new(
+                DateTime::from_str(c1.as_str()).map(|dt| dt.0)?,
+                DateTime::from_str(c2.as_str()).map(|dt| dt.0)?,
+            )
         }
     }
 }

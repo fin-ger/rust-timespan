@@ -43,6 +43,8 @@ pub enum Error {
     NoEnd,
     /// The local time zone is ambigious.
     LocalAmbigious,
+    /// The given string has a bad format.
+    BadFormat,
 }
 
 impl std::fmt::Display for Error {
@@ -67,6 +69,7 @@ impl StdError for Error {
             Error::NoStart => "The resulting span has no start value",
             Error::NoEnd => "The resulting span has no end value",
             Error::LocalAmbigious => "The resulting local time is ambigious",
+            Error::BadFormat => "The given string has a bad format",
         }
     }
 }
