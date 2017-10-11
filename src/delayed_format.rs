@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use Formatable;
 use Span;
 use Spanable;
-use Formatable;
 use std;
 
 /// An instance of this type gets created when issuing a `format` on a span.
@@ -35,18 +35,26 @@ pub struct DelayedFormat<'a, T> {
     pub end: &'a str,
 }
 
-impl<'a, T> std::fmt::Display for DelayedFormat<'a, T> where T: Spanable + Formatable {
+impl<'a, T> std::fmt::Display for DelayedFormat<'a, T>
+where
+    T: Spanable + Formatable,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use std::fmt::Write;
 
         // FIXME: this uses way too much memory
 
         let mut start_fmt = String::new();
-        start_fmt.write_fmt(format_args!("{}", self.span.start.format(self.start)))?;
+        start_fmt.write_fmt(format_args!(
+            "{}",
+            self.span.start.format(self.start)
+        ))?;
         start_fmt.shrink_to_fit();
 
         let mut end_fmt = String::new();
-        end_fmt.write_fmt(format_args!("{}", self.span.end.format(self.end)))?;
+        end_fmt.write_fmt(
+            format_args!("{}", self.span.end.format(self.end)),
+        )?;
         end_fmt.shrink_to_fit();
 
         let r1 = self.fmt.replace("{start}", start_fmt.as_str());

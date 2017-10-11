@@ -18,19 +18,18 @@
 
 use Error;
 use chrono::Duration;
-use chrono::format::{ParseError, DelayedFormat, StrftimeItems};
-use std::cmp::{PartialOrd, Ord};
+use chrono::format::{DelayedFormat, ParseError, StrftimeItems};
 use std::clone::Clone;
-use std::ops::{Add, Sub};
+use std::cmp::{Ord, PartialOrd};
 use std::fmt::Display;
 use std::marker::Copy;
+use std::ops::{Add, Sub};
 use std::str::FromStr;
 
 /// Types that implement this trait can be used inside a `Span`.
-pub trait Spanable: Copy + Clone +
-    Ord + PartialOrd +
-    Add<Duration, Output = Self> + Sub<Duration, Output = Self>
-{
+pub trait Spanable
+    : Copy + Clone + Ord + PartialOrd + Add<Duration, Output = Self> + Sub<Duration, Output = Self>
+    {
     /// This is a wrapper method to the `signed_duration_since` method from `chrono`.
     fn signed_duration_since(self, Self) -> Duration;
 }
@@ -39,7 +38,9 @@ pub trait Spanable: Copy + Clone +
 /// to a span instance.
 pub trait Parsable: FromStr<Err = ParseError> {
     /// This is a wrapper method to the `parse_from_str` method from `chrono`.
-    fn parse_from_str(&str, &str) -> Result<Self, Error> where Self: Sized;
+    fn parse_from_str(&str, &str) -> Result<Self, Error>
+    where
+        Self: Sized;
 }
 
 /// Spanable types that are formatable can be used to serialize a given span

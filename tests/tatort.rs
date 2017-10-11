@@ -26,9 +26,16 @@ use timespan::DateTimeSpan;
 
 #[test]
 fn tatort() {
-    let span = DateTimeSpan::from_utc_datetimespan(&"2017-04-02T18:15:00 - 2017-04-02T19:45:00".parse().unwrap(), &Berlin);
+    let span = DateTimeSpan::from_utc_datetimespan(
+        &"2017-04-02T18:15:00 - 2017-04-02T19:45:00".parse().unwrap(),
+        &Berlin,
+    );
 
-    assert!(span.contains(&Berlin.from_utc_datetime(&"2017-04-02T18:34:53".parse().unwrap())));
-    assert!(!span.contains(&Berlin.from_utc_datetime(&"2017-04-03T20:12:19".parse().unwrap())));
+    assert!(span.contains(&Berlin.from_utc_datetime(
+        &"2017-04-02T18:34:53".parse().unwrap(),
+    )));
+    assert!(!span.contains(&Berlin.from_utc_datetime(
+        &"2017-04-03T20:12:19".parse().unwrap(),
+    )));
     assert!(format!("{}", span) == "2017-04-02 20:15:00 CEST - 2017-04-02 21:45:00 CEST");
 }

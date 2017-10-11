@@ -17,22 +17,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use Error;
-use Spanable;
 use Formatable;
-use Span;
 use NaiveDateSpan;
+use Span;
+use Spanable;
+use chrono::{Date, Duration, TimeZone};
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{Date, TimeZone, Duration};
 use std;
 
-impl<T: TimeZone> Spanable for Date<T> where <T as TimeZone>::Offset: std::marker::Copy {
+impl<T: TimeZone> Spanable for Date<T>
+where
+    <T as TimeZone>::Offset: std::marker::Copy,
+{
     #[inline]
     fn signed_duration_since(self, other: Self) -> Duration {
         Date::signed_duration_since(self, other)
     }
 }
 
-impl<T: TimeZone> Formatable for Date<T> where <T as TimeZone>::Offset: std::fmt::Display {
+impl<T: TimeZone> Formatable for Date<T>
+where
+    <T as TimeZone>::Offset: std::fmt::Display,
+{
     #[inline]
     fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
         Date::format(self, fmt)
@@ -81,8 +87,12 @@ impl<T: TimeZone> DateSpan<T> {
     /// To avoid this `from_utc_datespan` should be prefered.
     pub fn from_local_datespan(span: &NaiveDateSpan, tz: &T) -> Result<Self, Error> {
         Ok(DateSpan {
-            start: tz.from_local_date(&span.start).single().ok_or(Error::LocalAmbigious)?,
-            end: tz.from_local_date(&span.end).single().ok_or(Error::LocalAmbigious)?,
+            start: tz.from_local_date(&span.start).single().ok_or(
+                Error::LocalAmbigious,
+            )?,
+            end: tz.from_local_date(&span.end).single().ok_or(
+                Error::LocalAmbigious,
+            )?,
         })
     }
 

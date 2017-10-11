@@ -20,13 +20,15 @@
 extern crate timespan;
 extern crate chrono;
 
-use timespan::NaiveTimeSpan;
 use chrono::NaiveTime;
+use timespan::NaiveTimeSpan;
 
 fn usage() {
-    println!("Please provide exactly 6 arguments!
+    println!(
+        "Please provide exactly 6 arguments!
 
-Usage: [span] [point] [span_fmt] [start_fmt] [end_fmt] [point_fmt]");
+Usage: [span] [point] [span_fmt] [start_fmt] [end_fmt] [point_fmt]"
+    );
 }
 
 fn main() {
@@ -55,13 +57,18 @@ fn main() {
         Err(e) => {
             println!("An error occured: {}", e);
             std::process::exit(2);
-        },
+        }
     };
 
     let point = NaiveTime::parse_from_str(p.as_str(), p_fmt.as_str()).unwrap();
     let c = span.contains(&point);
 
-    println!("{} {} {}", span, if c { "contains" } else { "does not contain" }, point);
+    println!(
+        "{} {} {}",
+        span,
+        if c { "contains" } else { "does not contain" },
+        point
+    );
 
     std::process::exit(!c as i32);
 }

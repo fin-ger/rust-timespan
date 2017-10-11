@@ -228,14 +228,14 @@ mod span_test;
 #[cfg(test)]
 mod delayed_format_test;
 
-pub use self::error::Error;
-pub use self::delayed_format::DelayedFormat;
-pub use self::span::Span;
-pub use self::traits::Spanable;
-pub use self::traits::Parsable;
-pub use self::traits::Formatable;
 pub use self::date_span::DateSpan;
 pub use self::date_time_span::DateTimeSpan;
+pub use self::delayed_format::DelayedFormat;
+pub use self::error::Error;
 pub use self::naive::NaiveDateSpan;
 pub use self::naive::NaiveDateTimeSpan;
 pub use self::naive::NaiveTimeSpan;
+pub use self::span::Span;
+pub use self::traits::Formatable;
+pub use self::traits::Parsable;
+pub use self::traits::Spanable;

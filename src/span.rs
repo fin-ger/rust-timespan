@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Error;
 use DelayedFormat;
-use Spanable;
+use Error;
 use Formatable;
 use Parsable;
+use Spanable;
 use chrono::Duration;
 use regex;
 use regex::Regex;
@@ -63,7 +63,10 @@ pub struct Span<T> {
     pub end: T,
 }
 
-impl<T> Span<T> where T: Spanable {
+impl<T> Span<T>
+where
+    T: Spanable,
+{
     /// Create a new span with a given starting point and a given end point.
     ///
     /// This method emits an `Error::Ordering` error when the end point lies
@@ -106,10 +109,16 @@ impl<T> Span<T> where T: Spanable {
             return Ok(self.clone());
         } else if self.end > other.start && self.end <= other.end && self.start < other.start {
             // -[##(-]--)-
-            return Ok(Span { start: self.start, end: other.start });
+            return Ok(Span {
+                start: self.start,
+                end: other.start,
+            });
         } else if self.start >= other.start && self.start < other.end && self.end > other.end {
             // -(--[-)##]-
-            return Ok(Span { start: other.end, end: self.end });
+            return Ok(Span {
+                start: other.end,
+                end: self.end,
+            });
         } else {
             // -[##(-)##]- -> err
             return Err(Error::NotContinuous);
@@ -128,10 +137,16 @@ impl<T> Span<T> where T: Spanable {
     pub fn symmetric_difference(&self, other: &Span<T>) -> Result<Span<T>, Error> {
         if self.end == other.start {
             // -[##](##)-
-            return Ok(Span { start: self.start, end: other.end });
+            return Ok(Span {
+                start: self.start,
+                end: other.end,
+            });
         } else if other.end == self.start {
             // -(##)[##]-
-            return Ok(Span { start: other.start, end: self.end });
+            return Ok(Span {
+                start: other.start,
+                end: self.end,
+            });
         } else {
             return Err(Error::NotContinuous);
         }
@@ -202,8 +217,14 @@ impl<T> Span<T> where T: Spanable {
         }
 
         Ok((
-            Span { start: self.start, end: *at },
-            Span { start: *at, end: self.end },
+            Span {
+                start: self.start,
+                end: *at,
+            },
+            Span {
+                start: *at,
+                end: self.end,
+            },
         ))
     }
 
@@ -258,7 +279,10 @@ impl<T> Span<T> where T: Spanable {
     }
 }
 
-impl<T> Span<T> where T: Spanable + Formatable {
+impl<T> Span<T>
+where
+    T: Spanable + Formatable,
+{
     /// Formats the span with the specified format strings.
     ///
     /// For the `start` and `end` format strings see the `chrono::format::strftime` module.
@@ -292,7 +316,10 @@ impl<T> Span<T> where T: Spanable + Formatable {
     }
 }
 
-impl<T> Span<T> where T: Spanable + Parsable {
+impl<T> Span<T>
+where
+    T: Spanable + Parsable,
+{
     /// Parses the span with the specified format strings from a given string `s`.
     ///
     /// For the `start` and `end` format strings see the `chrono::format::strftime` module.
@@ -349,7 +376,10 @@ impl<T> Span<T> where T: Spanable + Parsable {
 }
 
 /// Parses a `Span` from a string in the format `{start} - {end}`.
-impl<T> std::str::FromStr for Span<T> where T: Spanable + Parsable {
+impl<T> std::str::FromStr for Span<T>
+where
+    T: Spanable + Parsable,
+{
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -359,22 +389,25 @@ impl<T> std::str::FromStr for Span<T> where T: Spanable + Parsable {
         let c1 = caps.get(1).ok_or(Error::NoStart)?;
         let c2 = caps.get(2).ok_or(Error::NoEnd)?;
 
-        Span::new(
-            T::from_str(c1.as_str())?,
-            T::from_str(c2.as_str())?,
-        )
+        Span::new(T::from_str(c1.as_str())?, T::from_str(c2.as_str())?)
     }
 }
 
 /// Formats a `Span` in the format `{start} - {end}`.
-impl<T> std::fmt::Debug for Span<T> where T: Spanable + Formatable {
+impl<T> std::fmt::Debug for Span<T>
+where
+    T: Spanable + Formatable,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} - {}", self.start, self.end)
     }
 }
 
 /// Formats a `Span` in the format `{start} - {end}`.
-impl<T> std::fmt::Display for Span<T> where T: Spanable + Formatable {
+impl<T> std::fmt::Display for Span<T>
+where
+    T: Spanable + Formatable,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         std::fmt::Debug::fmt(self, f)
     }
@@ -382,15 +415,18 @@ impl<T> std::fmt::Display for Span<T> where T: Spanable + Formatable {
 
 #[cfg(feature = "with-serde")]
 mod with_serde {
-    use super::Span;
-    use super::Spanable;
     use super::Formatable;
     use super::Parsable;
+    use super::Span;
+    use super::Spanable;
     use serde::{de, ser};
-    use std::marker::PhantomData;
     use std::fmt;
+    use std::marker::PhantomData;
 
-    impl<T> ser::Serialize for Span<T> where T: Spanable + Formatable {
+    impl<T> ser::Serialize for Span<T>
+    where
+        T: Spanable + Formatable,
+    {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: ser::Serializer,
@@ -403,7 +439,10 @@ mod with_serde {
         phantom: PhantomData<T>,
     }
 
-    impl<'de, T> de::Visitor<'de> for SpanVisitor<T> where T: Spanable + Parsable {
+    impl<'de, T> de::Visitor<'de> for SpanVisitor<T>
+    where
+        T: Spanable + Parsable,
+    {
         type Value = Span<T>;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -418,7 +457,10 @@ mod with_serde {
         }
     }
 
-    impl<'de, T> de::Deserialize<'de> for Span<T> where T: Spanable + Parsable {
+    impl<'de, T> de::Deserialize<'de> for Span<T>
+    where
+        T: Spanable + Parsable,
+    {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: de::Deserializer<'de>,

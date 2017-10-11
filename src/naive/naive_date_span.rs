@@ -17,12 +17,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use Error;
-use Spanable;
 use Formatable;
 use Parsable;
 use Span;
+use Spanable;
+use chrono::{Duration, NaiveDate};
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{NaiveDate, Duration};
 
 impl Spanable for NaiveDate {
     #[inline]

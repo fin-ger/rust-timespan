@@ -30,7 +30,11 @@ fn wacken() {
     // -> chrono_tz::Tz, Utc, Local and FixedOffset are not implementing from_str and parse_from_str for Date
     let span = DateSpan::from_utc_datespan(&"2017-08-03 - 2017-08-05".parse().unwrap(), &Berlin);
 
-    assert!(span.contains(&Berlin.from_utc_date(&"2017-08-04".parse().unwrap())));
-    assert!(!span.contains(&Berlin.from_utc_date(&"2017-07-22".parse().unwrap())));
+    assert!(span.contains(
+        &Berlin.from_utc_date(&"2017-08-04".parse().unwrap()),
+    ));
+    assert!(!span.contains(
+        &Berlin.from_utc_date(&"2017-07-22".parse().unwrap()),
+    ));
     assert!(format!("{}", span) == "2017-08-03CEST - 2017-08-05CEST");
 }

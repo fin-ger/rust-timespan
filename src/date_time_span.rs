@@ -17,24 +17,30 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use Error;
-use Spanable;
 use Formatable;
+use NaiveDateTimeSpan;
 use Parsable;
 use Span;
-use NaiveDateTimeSpan;
-use chrono::offset::{Local, Utc, FixedOffset};
+use Spanable;
+use chrono::{DateTime as ChronoDateTime, Duration, TimeZone};
 use chrono::format::{DelayedFormat, StrftimeItems};
-use chrono::{DateTime as ChronoDateTime, TimeZone, Duration};
+use chrono::offset::{FixedOffset, Local, Utc};
 use std;
 
-impl<T: TimeZone> Spanable for ChronoDateTime<T> where <T as TimeZone>::Offset: std::marker::Copy {
+impl<T: TimeZone> Spanable for ChronoDateTime<T>
+where
+    <T as TimeZone>::Offset: std::marker::Copy,
+{
     #[inline]
     fn signed_duration_since(self, other: Self) -> Duration {
         ChronoDateTime::signed_duration_since(self, other)
     }
 }
 
-impl<T: TimeZone> Formatable for ChronoDateTime<T> where <T as TimeZone>::Offset: std::fmt::Display {
+impl<T: TimeZone> Formatable for ChronoDateTime<T>
+where
+    <T as TimeZone>::Offset: std::fmt::Display,
+{
     #[inline]
     fn format<'a>(&self, fmt: &'a str) -> DelayedFormat<StrftimeItems<'a>> {
         ChronoDateTime::format(self, fmt)
@@ -44,7 +50,9 @@ impl<T: TimeZone> Formatable for ChronoDateTime<T> where <T as TimeZone>::Offset
 impl Parsable for ChronoDateTime<Local> {
     #[inline]
     fn parse_from_str(s: &str, fmt: &str) -> Result<ChronoDateTime<Local>, Error> {
-        Local.datetime_from_str(s, fmt).map_err(|e| Error::Parsing(e))
+        Local.datetime_from_str(s, fmt).map_err(
+            |e| Error::Parsing(e),
+        )
     }
 }
 
@@ -100,8 +108,12 @@ impl<T: TimeZone> DateTimeSpan<T> {
     /// To avoid this `from_utc_datetimespan` should be prefered.
     pub fn from_local_datetimespan(span: &NaiveDateTimeSpan, tz: &T) -> Result<Self, Error> {
         Ok(DateTimeSpan {
-            start: tz.from_local_datetime(&span.start).single().ok_or(Error::LocalAmbigious)?,
-            end: tz.from_local_datetime(&span.end).single().ok_or(Error::LocalAmbigious)?,
+            start: tz.from_local_datetime(&span.start).single().ok_or(
+                Error::LocalAmbigious,
+            )?,
+            end: tz.from_local_datetime(&span.end).single().ok_or(
+                Error::LocalAmbigious,
+            )?,
         })
     }
 
@@ -135,12 +147,12 @@ pub use self::with_chrono_tz::DateTime;
 
 #[cfg(feature = "with-chrono-tz")]
 mod with_chrono_tz {
+    use super::DateTimeSpan;
     use super::Error;
     use super::Parsable;
-    use super::DateTimeSpan;
-    use regex::Regex;
-    use chrono::{TimeZone, DateTime as ChronoDateTime, ParseError};
+    use chrono::{DateTime as ChronoDateTime, ParseError, TimeZone};
     use chrono_tz::Tz;
+    use regex::Regex;
     use std::convert::From;
     use std::str::FromStr;
 
@@ -167,8 +179,7 @@ mod with_chrono_tz {
             let c2 = caps.get(2).map(|m| m.as_str()).unwrap();
 
             let tz = c2.parse::<Tz>().unwrap();
-            Tz::datetime_from_str(&tz, &c1, "%F %T")
-                .map(|dt| DateTime(dt))
+            Tz::datetime_from_str(&tz, &c1, "%F %T").map(|dt| DateTime(dt))
         }
     }
 

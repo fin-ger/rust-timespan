@@ -46,7 +46,12 @@ fn parse_from_str_test() {
     let ts1 = parse(s, "from {start} to {end} on Monday", "%H.%M", "%H.%M").unwrap();
     assert!(ts1 == NaiveTimeSpan::from_str("09:00:00 - 17:00:00").unwrap());
 
-    let ts2 = parse("end: 17.00, start: 09.00", "end: {end}, start: {start}", "%H.%M", "%H.%M").unwrap();
+    let ts2 = parse(
+        "end: 17.00, start: 09.00",
+        "end: {end}, start: {start}",
+        "%H.%M",
+        "%H.%M",
+    ).unwrap();
     assert!(ts2 == NaiveTimeSpan::from_str("09:00:00 - 17:00:00").unwrap());
 
     assert!(parse(s, "foo", "%H.%M", "%H.%M").is_err()); // empty
@@ -63,8 +68,8 @@ fn duration_test() {
 
 #[test]
 fn difference_test() {
-    let t1  = NaiveTimeSpan::from_str("09:00:00 - 11:00:00").unwrap();
-    let t2  = NaiveTimeSpan::from_str("10:00:00 - 12:00:00").unwrap();
+    let t1 = NaiveTimeSpan::from_str("09:00:00 - 11:00:00").unwrap();
+    let t2 = NaiveTimeSpan::from_str("10:00:00 - 12:00:00").unwrap();
     let t12 = NaiveTimeSpan::from_str("09:00:00 - 10:00:00").unwrap();
     let t21 = NaiveTimeSpan::from_str("11:00:00 - 12:00:00").unwrap();
     assert!(t1.difference(&t2).unwrap() == t12);

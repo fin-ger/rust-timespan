@@ -17,8 +17,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use NaiveTimeSpan;
-use std::str::FromStr;
 use std::fmt::Write;
+use std::str::FromStr;
 
 #[test]
 fn fmt_test() {

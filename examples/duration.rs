@@ -19,13 +19,15 @@
 extern crate timespan;
 extern crate chrono;
 
-use timespan::NaiveTimeSpan;
 use chrono::NaiveTime;
+use timespan::NaiveTimeSpan;
 
 fn usage() {
-    println!("Please provide exactly 4 arguments!
+    println!(
+        "Please provide exactly 4 arguments!
 
-Usage: [span] [span_fmt] [start_fmt] [end_fmt]");
+Usage: [span] [span_fmt] [start_fmt] [end_fmt]"
+    );
 }
 
 fn main() {
@@ -52,13 +54,12 @@ fn main() {
         Err(e) => {
             println!("An error occured: {}", e);
             std::process::exit(2);
-        },
+        }
     };
 
     // chrono::Duration has no proper format method, so we use NaiveTime for formatting...
-    let duration = NaiveTime::from_num_seconds_from_midnight(
-        span.duration().num_seconds() as u32, 0
-    );
+    let duration =
+        NaiveTime::from_num_seconds_from_midnight(span.duration().num_seconds() as u32, 0);
 
     println!("duration for {}: {}", span, duration);
 }

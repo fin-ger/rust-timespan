@@ -21,11 +21,13 @@ extern crate timespan;
 use timespan::NaiveTimeSpan;
 
 fn usage() {
-    println!("Please provide exactly 7 arguments!
+    println!(
+        "Please provide exactly 7 arguments!
 
 Usage: [span]
        [from_span_fmt] [from_start_fmt] [from_end_fmt]
-       [to_span_fmt] [to_start_fmt] [to_end_fmt]");
+       [to_span_fmt] [to_start_fmt] [to_end_fmt]"
+    );
 }
 
 fn main() {
@@ -55,7 +57,14 @@ fn main() {
         Err(e) => {
             println!("An error occured: {}", e);
             std::process::exit(2);
-        },
+        }
     };
-    println!("{}", span.format(to_span_fmt.as_str(), to_start_fmt.as_str(), to_end_fmt.as_str()));
+    println!(
+        "{}",
+        span.format(
+            to_span_fmt.as_str(),
+            to_start_fmt.as_str(),
+            to_end_fmt.as_str(),
+        )
+    );
 }
