@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Error;
-use Formatable;
-use NaiveDateTimeSpan;
-use Parsable;
-use Span;
-use Spanable;
+use crate::Error;
+use crate::Formatable;
+use crate::NaiveDateTimeSpan;
+use crate::Parsable;
+use crate::Span;
+use crate::Spanable;
 use chrono::{DateTime as ChronoDateTime, Duration, TimeZone};
 use chrono::format::{DelayedFormat, StrftimeItems};
 use chrono::offset::{FixedOffset, Local, Utc};

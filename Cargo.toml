@@ -10,6 +10,7 @@ readme = "README.md"
 keywords = ["timespan", "chrono"]
 categories = ["date-and-time"]
 license = "GPL-3.0"
+edition = "2018"
 
 [dependencies]
 chrono = "0.4.9"

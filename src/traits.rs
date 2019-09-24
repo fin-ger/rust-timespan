@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Error;
+use crate::Error;
 use chrono::Duration;
 use chrono::format::{DelayedFormat, ParseError, StrftimeItems};
 use std::clone::Clone;
@@ -31,14 +31,14 @@ pub trait Spanable
     : Copy + Clone + Ord + PartialOrd + Add<Duration, Output = Self> + Sub<Duration, Output = Self>
     {
     /// This is a wrapper method to the `signed_duration_since` method from `chrono`.
-    fn signed_duration_since(self, Self) -> Duration;
+    fn signed_duration_since(self, _: Self) -> Duration;
 }
 
 /// Spanable types that are parsable can be used to deserialize a given string
 /// to a span instance.
 pub trait Parsable: FromStr<Err = ParseError> {
     /// This is a wrapper method to the `parse_from_str` method from `chrono`.
-    fn parse_from_str(&str, &str) -> Result<Self, Error>
+    fn parse_from_str(_: &str, _: &str) -> Result<Self, Error>
     where
         Self: Sized;
 }
@@ -47,5 +47,5 @@ pub trait Parsable: FromStr<Err = ParseError> {
 /// to a string.
 pub trait Formatable: Display {
     /// This is a wrapper method to the `format` method from `chrono`.
-    fn format<'a>(&self, &'a str) -> DelayedFormat<StrftimeItems<'a>>;
+    fn format<'a>(&self, _: &'a str) -> DelayedFormat<StrftimeItems<'a>>;
 }

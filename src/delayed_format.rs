@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use Formatable;
-use Span;
-use Spanable;
+use crate::Formatable;
+use crate::Span;
+use crate::Spanable;
 use std;
 
 /// An instance of this type gets created when issuing a `format` on a span.

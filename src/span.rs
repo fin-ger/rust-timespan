@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use DelayedFormat;
-use Error;
-use Formatable;
-use Parsable;
-use Spanable;
+use crate::DelayedFormat;
+use crate::Error;
+use crate::Formatable;
+use crate::Parsable;
+use crate::Spanable;
 use chrono::Duration;
 use regex;
 use regex::Regex;
