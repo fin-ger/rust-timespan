@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-extern crate timespan;
 extern crate chrono;
 extern crate chrono_tz;
+extern crate timespan;
 
 use chrono::offset::TimeZone;
 use chrono_tz::Europe::Berlin;
@@ -31,11 +31,7 @@ fn tatort() {
         &Berlin,
     );
 
-    assert!(span.contains(&Berlin.from_utc_datetime(
-        &"2017-04-02T18:34:53".parse().unwrap(),
-    )));
-    assert!(!span.contains(&Berlin.from_utc_datetime(
-        &"2017-04-03T20:12:19".parse().unwrap(),
-    )));
+    assert!(span.contains(&Berlin.from_utc_datetime(&"2017-04-02T18:34:53".parse().unwrap(),)));
+    assert!(!span.contains(&Berlin.from_utc_datetime(&"2017-04-03T20:12:19".parse().unwrap(),)));
     assert!(format!("{}", span) == "2017-04-02 20:15:00 CEST - 2017-04-02 21:45:00 CEST");
 }

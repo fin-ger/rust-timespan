@@ -465,7 +465,9 @@ mod with_serde {
         where
             D: de::Deserializer<'de>,
         {
-            deserializer.deserialize_str(SpanVisitor { phantom: PhantomData })
+            deserializer.deserialize_str(SpanVisitor {
+                phantom: PhantomData,
+            })
         }
     }
 }

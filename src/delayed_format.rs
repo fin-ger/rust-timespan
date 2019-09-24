@@ -45,16 +45,11 @@ where
         // FIXME: this uses way too much memory
 
         let mut start_fmt = String::new();
-        start_fmt.write_fmt(format_args!(
-            "{}",
-            self.span.start.format(self.start)
-        ))?;
+        start_fmt.write_fmt(format_args!("{}", self.span.start.format(self.start)))?;
         start_fmt.shrink_to_fit();
 
         let mut end_fmt = String::new();
-        end_fmt.write_fmt(
-            format_args!("{}", self.span.end.format(self.end)),
-        )?;
+        end_fmt.write_fmt(format_args!("{}", self.span.end.format(self.end)))?;
         end_fmt.shrink_to_fit();
 
         let r1 = self.fmt.replace("{start}", start_fmt.as_str());

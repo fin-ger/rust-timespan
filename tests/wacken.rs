@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-extern crate timespan;
 extern crate chrono;
 extern crate chrono_tz;
+extern crate timespan;
 
 use chrono::TimeZone;
 use chrono_tz::Europe::Berlin;
@@ -30,11 +30,7 @@ fn wacken() {
     // -> chrono_tz::Tz, Utc, Local and FixedOffset are not implementing from_str and parse_from_str for Date
     let span = DateSpan::from_utc_datespan(&"2017-08-03 - 2017-08-05".parse().unwrap(), &Berlin);
 
-    assert!(span.contains(
-        &Berlin.from_utc_date(&"2017-08-04".parse().unwrap()),
-    ));
-    assert!(!span.contains(
-        &Berlin.from_utc_date(&"2017-07-22".parse().unwrap()),
-    ));
+    assert!(span.contains(&Berlin.from_utc_date(&"2017-08-04".parse().unwrap()),));
+    assert!(!span.contains(&Berlin.from_utc_date(&"2017-07-22".parse().unwrap()),));
     assert!(format!("{}", span) == "2017-08-03CEST - 2017-08-05CEST");
 }

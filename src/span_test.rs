@@ -17,25 +17,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::NaiveTimeSpan;
-use chrono::Duration;
 use chrono::naive::NaiveTime;
+use chrono::Duration;
 use std::str::FromStr;
 
 #[test]
 fn new_test() {
-    assert!(
-        NaiveTimeSpan::new(
-            NaiveTime::from_hms(12, 0, 0),
-            NaiveTime::from_hms(12, 30, 0),
-        ).is_ok()
-    );
+    assert!(NaiveTimeSpan::new(
+        NaiveTime::from_hms(12, 0, 0),
+        NaiveTime::from_hms(12, 30, 0),
+    )
+    .is_ok());
 
-    assert!(
-        NaiveTimeSpan::new(
-            NaiveTime::from_hms(12, 30, 0),
-            NaiveTime::from_hms(12, 0, 0),
-        ).is_err()
-    );
+    assert!(NaiveTimeSpan::new(
+        NaiveTime::from_hms(12, 30, 0),
+        NaiveTime::from_hms(12, 0, 0),
+    )
+    .is_err());
 }
 
 #[test]
@@ -51,7 +49,8 @@ fn parse_from_str_test() {
         "end: {end}, start: {start}",
         "%H.%M",
         "%H.%M",
-    ).unwrap();
+    )
+    .unwrap();
     assert!(ts2 == NaiveTimeSpan::from_str("09:00:00 - 17:00:00").unwrap());
 
     assert!(parse(s, "foo", "%H.%M", "%H.%M").is_err()); // empty
@@ -285,7 +284,8 @@ fn from_str_test() {
     let parsed_reference = NaiveTimeSpan::new(
         NaiveTime::from_hms(10, 45, 0),
         NaiveTime::from_hms(15, 30, 0),
-    ).unwrap();
+    )
+    .unwrap();
     assert!(parsed == parsed_reference);
 
     assert!(NaiveTimeSpan::from_str("10.45.00 - 15.30.00").is_err());
@@ -299,7 +299,8 @@ fn fmt_test() {
     let ts = NaiveTimeSpan::new(
         NaiveTime::from_hms(12, 0, 0),
         NaiveTime::from_hms(12, 30, 0),
-    ).unwrap();
+    )
+    .unwrap();
 
     assert!(format!("{}", ts) == "12:00:00 - 12:30:00");
 }
@@ -317,16 +318,18 @@ mod with_serde {
 
     #[test]
     fn serialize_test() {
-        let reference =
-            NaiveTimeSpanTest { span: NaiveTimeSpan::from_str("09:00:00 - 12:00:00").unwrap() };
+        let reference = NaiveTimeSpanTest {
+            span: NaiveTimeSpan::from_str("09:00:00 - 12:00:00").unwrap(),
+        };
         let json = r#"{"span":"09:00:00 - 12:00:00"}"#;
         assert!(serde_json::to_string(&reference).unwrap() == json);
     }
 
     #[test]
     fn deserialize_test() {
-        let reference =
-            NaiveTimeSpanTest { span: NaiveTimeSpan::from_str("09:00:00 - 12:00:00").unwrap() };
+        let reference = NaiveTimeSpanTest {
+            span: NaiveTimeSpan::from_str("09:00:00 - 12:00:00").unwrap(),
+        };
         let json = r#"{"span":"09:00:00 - 12:00:00"}"#;
         assert!(serde_json::from_str::<NaiveTimeSpanTest>(&json).unwrap() == reference);
     }

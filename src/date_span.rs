@@ -21,8 +21,8 @@ use crate::Formatable;
 use crate::NaiveDateSpan;
 use crate::Span;
 use crate::Spanable;
-use chrono::{Date, Duration, TimeZone};
 use chrono::format::{DelayedFormat, StrftimeItems};
+use chrono::{Date, Duration, TimeZone};
 use std;
 
 impl<T: TimeZone> Spanable for Date<T>
@@ -87,12 +87,14 @@ impl<T: TimeZone> DateSpan<T> {
     /// To avoid this `from_utc_datespan` should be prefered.
     pub fn from_local_datespan(span: &NaiveDateSpan, tz: &T) -> Result<Self, Error> {
         Ok(DateSpan {
-            start: tz.from_local_date(&span.start).single().ok_or(
-                Error::LocalAmbigious,
-            )?,
-            end: tz.from_local_date(&span.end).single().ok_or(
-                Error::LocalAmbigious,
-            )?,
+            start: tz
+                .from_local_date(&span.start)
+                .single()
+                .ok_or(Error::LocalAmbigious)?,
+            end: tz
+                .from_local_date(&span.end)
+                .single()
+                .ok_or(Error::LocalAmbigious)?,
         })
     }
 

@@ -17,8 +17,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::Error;
-use chrono::Duration;
 use chrono::format::{DelayedFormat, ParseError, StrftimeItems};
+use chrono::Duration;
 use std::clone::Clone;
 use std::cmp::{Ord, PartialOrd};
 use std::fmt::Display;
@@ -27,9 +27,9 @@ use std::ops::{Add, Sub};
 use std::str::FromStr;
 
 /// Types that implement this trait can be used inside a `Span`.
-pub trait Spanable
-    : Copy + Clone + Ord + PartialOrd + Add<Duration, Output = Self> + Sub<Duration, Output = Self>
-    {
+pub trait Spanable:
+    Copy + Clone + Ord + PartialOrd + Add<Duration, Output = Self> + Sub<Duration, Output = Self>
+{
     /// This is a wrapper method to the `signed_duration_since` method from `chrono`.
     fn signed_duration_since(self, _: Self) -> Duration;
 }

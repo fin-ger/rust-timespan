@@ -214,19 +214,19 @@ extern crate regex;
 #[cfg(feature = "chrono-tz")]
 extern crate chrono_tz;
 
-mod error;
-mod delayed_format;
-mod span;
-mod traits;
 mod date_span;
 mod date_time_span;
+mod delayed_format;
+mod error;
+mod span;
+mod traits;
 
 pub mod naive;
 
 #[cfg(test)]
-mod span_test;
-#[cfg(test)]
 mod delayed_format_test;
+#[cfg(test)]
+mod span_test;
 
 pub use self::date_span::DateSpan;
 pub use self::date_time_span::DateTimeSpan;

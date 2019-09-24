@@ -22,9 +22,9 @@ use crate::NaiveDateTimeSpan;
 use crate::Parsable;
 use crate::Span;
 use crate::Spanable;
-use chrono::{DateTime as ChronoDateTime, Duration, TimeZone};
 use chrono::format::{DelayedFormat, StrftimeItems};
 use chrono::offset::{FixedOffset, Local, Utc};
+use chrono::{DateTime as ChronoDateTime, Duration, TimeZone};
 use std;
 
 impl<T: TimeZone> Spanable for ChronoDateTime<T>
@@ -50,9 +50,9 @@ where
 impl Parsable for ChronoDateTime<Local> {
     #[inline]
     fn parse_from_str(s: &str, fmt: &str) -> Result<ChronoDateTime<Local>, Error> {
-        Local.datetime_from_str(s, fmt).map_err(
-            |e| Error::Parsing(e),
-        )
+        Local
+            .datetime_from_str(s, fmt)
+            .map_err(|e| Error::Parsing(e))
     }
 }
 
@@ -108,12 +108,14 @@ impl<T: TimeZone> DateTimeSpan<T> {
     /// To avoid this `from_utc_datetimespan` should be prefered.
     pub fn from_local_datetimespan(span: &NaiveDateTimeSpan, tz: &T) -> Result<Self, Error> {
         Ok(DateTimeSpan {
-            start: tz.from_local_datetime(&span.start).single().ok_or(
-                Error::LocalAmbigious,
-            )?,
-            end: tz.from_local_datetime(&span.end).single().ok_or(
-                Error::LocalAmbigious,
-            )?,
+            start: tz
+                .from_local_datetime(&span.start)
+                .single()
+                .ok_or(Error::LocalAmbigious)?,
+            end: tz
+                .from_local_datetime(&span.end)
+                .single()
+                .ok_or(Error::LocalAmbigious)?,
         })
     }
 

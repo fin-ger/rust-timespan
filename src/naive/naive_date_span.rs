@@ -21,8 +21,8 @@ use crate::Formatable;
 use crate::Parsable;
 use crate::Span;
 use crate::Spanable;
-use chrono::{Duration, NaiveDate};
 use chrono::format::{DelayedFormat, StrftimeItems};
+use chrono::{Duration, NaiveDate};
 
 impl Spanable for NaiveDate {
     #[inline]
