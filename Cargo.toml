@@ -1,6 +1,6 @@
 [package]
 name = "timespan"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Fin Christensen <christensen.fin@gmail.com>"]
 description = "A simple timespan for chrono times."
 documentation = "https://docs.rs/timespan/"
@@ -11,6 +11,9 @@ keywords = ["timespan", "chrono"]
 categories = ["date-and-time"]
 license = "GPL-3.0"
 edition = "2018"
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 chrono = "0.4.9"
@@ -31,9 +34,6 @@ with-chrono-tz = ["chrono-tz"]
 
 [badges]
 travis-ci = { repository = "fin-ger/rust-timespan/", branch = "master" }
-
-[package.metadata.docs.rs]
-all-features = true
 
 [lib]
 test = true
