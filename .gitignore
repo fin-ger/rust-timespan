@@ -8,3 +8,4 @@ Cargo.lock
 
 # Do not commit backup files
 *~
+*.temp

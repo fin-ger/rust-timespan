@@ -1,11 +1,31 @@
-# Timespan Library for Rust
-[![crates.io](https://img.shields.io/crates/v/timespan.svg)](https://crates.io/crates/timespan)
-[![Latest Tag](https://img.shields.io/github/tag/fin-ger/rust-timespan.svg)](https://github.com/fin-ger/rust-timespan/releases)
-[![Build Status](https://travis-ci.org/fin-ger/rust-timespan.svg?branch=master)](https://travis-ci.org/fin-ger/rust-timespan)
-[![Documentation](https://docs.rs/timespan/badge.svg)](https://docs.rs/timespan/)
-[![Homepage](https://img.shields.io/badge/github.io-homepage-blue.svg)](https://fin-ger.github.io/rust-timespan/)
+<h1 align="center">Timespan Library for Rust 🦀</h1>
+<p align="center">
+  <a href="https://travis-ci.org/fin-ger/rust-timespan">
+    <img alt="Build Status" src="https://travis-ci.org/fin-ger/rust-timespan.svg?branch=master">
+  </a>
+  <a href='https://coveralls.io/github/fin-ger/rust-timespan?branch=master'>
+    <img src='https://coveralls.io/repos/github/fin-ger/rust-timespan/badge.svg?branch=master' alt='Coverage Status'>
+  </a>
+  <a href="https://crates.io/crates/timespan">
+    <img alt="crates.io" src="https://img.shields.io/crates/v/timespan.svg">
+  </a>
+  <a href="https://docs.rs/timespan">
+    <img alt="Docs.rs" src="https://docs.rs/timespan/badge.svg">
+  </a>
+  <a href="https://fin-ger.github.io/rust-timespan/">
+    <img alt="Homepage" src="https://img.shields.io/badge/github.io-homepage-blue.svg">
+  </a>
+  <a href="https://github.com/fin-ger/rust-timespan/blob/master/LICENSE">
+    <img alt="GitHub" src="https://img.shields.io/github/license/fin-ger/rust-timespan.svg">
+  </a>
+  <a href="http://makeapullrequest.com">
+    <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
+  </a>
+  <br>
+  <i>A simple timespan for chrono times</i>
+</p>
 
-A simple timespan for chrono times.
+---
 
 ## Usage
 
@@ -21,12 +41,6 @@ Or, if you want [Serde](https://github.com/serde-rs/serde) support, include it l
 ```toml
 [dependencies]
 timespan = { version = "^0", features = ["with-serde"] }
-```
-
-Then put this in your crate root:
-
-```rust
-extern crate timespan;
 ```
 
 ## Overview
