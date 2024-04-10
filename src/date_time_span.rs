@@ -27,7 +27,7 @@ use chrono::offset::{FixedOffset, Local, Utc};
 use chrono::{DateTime as ChronoDateTime, Duration, TimeZone};
 use std;
 
-impl<T: TimeZone> Spanable for ChronoDateTime<T>
+impl<T: TimeZone + std::marker::Copy> Spanable for ChronoDateTime<T>
 where
     <T as TimeZone>::Offset: std::marker::Copy,
 {
