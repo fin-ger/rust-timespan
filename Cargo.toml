@@ -1,6 +1,6 @@
 [package]
 name = "timespan"
-version = "0.2.1-alpha.0"
+version = "0.2.1"
 authors = ["Fin Christensen <fin.christensen@posteo.de>"]
 description = "A simple timespan for chrono times."
 documentation = "https://docs.rs/timespan/"
